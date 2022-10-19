@@ -1,0 +1,21 @@
+---
+repos:
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.4
+    hooks:
+      - id: bandit
+  - repo: https://github.com/myint/autoflake
+    rev: v1.4
+    hooks:
+      - id: autoflake
+        args:
+         - -r
+         - --in-place
+         - --exclude=venv
+         - --expand-star-imports
+         - --remove-unused-variables
+         - --remove-all-unused-imports
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
