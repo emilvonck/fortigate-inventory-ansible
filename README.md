@@ -4,24 +4,13 @@ Ansible collection with a inventory plugin.
 
 ## Installation
 
-**Note**: Python 3.8+ is required. Tested with ansible-core==2.13.5
-
+**Note**: Python 3.8+ is required.
 
 ### Python packages
-Use [poetry](https://python-poetry.org/s) to setup environment.
 
-```bash
-portry add ansible
-poetry add requests
 ```
-
-**OR**
-
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install requirements.
-
-```bash
-pip install ansible
-pip install requests
+ansible
+requests
 ```
 
 ### Install the collection
@@ -33,23 +22,24 @@ ansible-galaxy collection install git+https://gitlab.com/evansible/fortigate-inv
 ## Usage
 
 Update "ansible.cfg".
-```ini
-[defaults]
-force_valid_group_names = always
-
+```bash
+cat << 'EOF' > ansible.cfg
 [inventory]
 enable_plugins = evonck.fortigate.inventory, yaml, ini
+EOF
 ```
 
-Update "example_fortigate.yaml" with your values.
-```yml
+Update "example_fortigate.yaml", replace with your values.
+```bash
+cat << 'EOF' > example_fortigate.yaml
 ---
 plugin: evonck.fortigate.inventory
 api_host: 192.0.2.1 # Can also be set with FORTIGATE_URL environment variable.
 token: tokengoeshere # Can also be set with FORTIGATE_TOKEN environment variable.
-validate_certs: False
+validate_certs: False # Defaults to True
+EOF
 ```
-
+Run
 ```bash
 ansible-inventory -i example_fortigate.yaml --list
 ```
