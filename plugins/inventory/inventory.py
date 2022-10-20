@@ -50,7 +50,7 @@ class InventoryModule(BaseInventoryPlugin):
         valid = False
         if super(InventoryModule, self).verify_file(path):
             # base class verifies that file exists and is readable by current user
-            if path.endswith(("fortigate.yaml", "fortgate.yml")):
+            if path.endswith(("fortigate.yaml", "fortigate.yml")):
                 valid = True
         return valid
 
