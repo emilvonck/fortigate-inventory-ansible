@@ -28,6 +28,13 @@ pip install -r requirements.txt
 ## Usage
 
 Update "example_fortigate.yaml" with your values.
+```yml
+---
+plugin: evonck.fortigate.inventory
+api_host: 192.0.2.1 # Can also be set with FORTIGATE_URL environment variable.
+token: tokengoeshere # Can also be set with FORTIGATE_TOKEN environment variable.
+validate_certs: False
+```
 
 ```bash
 ansible-inventory -i example_fortigate.yaml --list
