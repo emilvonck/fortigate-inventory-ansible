@@ -4,17 +4,13 @@ Ansible collection with a inventory plugin.
 
 ## Installation
 
-**Note**: Python 3.8+ is required.
+**Note**: Python 3.8+ is required. Tested with ansible-core==2.13.5
 
-Use poetry [poetry](https://python-poetry.org/s) to setup environment.
+Use [poetry](https://python-poetry.org/s) to setup environment.
 
 ```bash
-poetry install
-```
-
-Activate environment
-```bash
-poetry shell
+portry add ansible
+poetry add requests
 ```
 
 **OR**
@@ -22,10 +18,20 @@ poetry shell
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install requirements.
 
 ```bash
-pip install -r requirements.txt
+pip install ansible
+pip install requests
 ```
 
 ## Usage
+
+Update "ansible.cfg".
+```ini
+[defaults]
+force_valid_group_names = always
+
+[inventory]
+enable_plugins = evonck.fortigate.inventory, yaml, ini
+```
 
 Update "example_fortigate.yaml" with your values.
 ```yml
@@ -42,6 +48,3 @@ ansible-inventory -i example_fortigate.yaml --list
 
 ## Contributing
 Pull requests are welcome.
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
