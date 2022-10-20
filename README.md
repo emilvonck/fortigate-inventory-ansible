@@ -22,6 +22,12 @@ pip install ansible
 pip install requests
 ```
 
+Install the collection
+
+```bash
+ansible-galaxy collection install git+https://gitlab.com/evansible/fortigate-inventory-ansible.git
+```
+
 ## Usage
 
 Update "ansible.cfg".
