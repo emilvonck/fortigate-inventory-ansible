@@ -6,6 +6,8 @@ Ansible collection with a inventory plugin.
 
 **Note**: Python 3.8+ is required. Tested with ansible-core==2.13.5
 
+
+### Python packages
 Use [poetry](https://python-poetry.org/s) to setup environment.
 
 ```bash
@@ -22,7 +24,7 @@ pip install ansible
 pip install requests
 ```
 
-Install the collection
+### Install the collection
 
 ```bash
 ansible-galaxy collection install git+https://gitlab.com/evansible/fortigate-inventory-ansible.git
