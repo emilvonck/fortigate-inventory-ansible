@@ -81,7 +81,10 @@ class InventoryModule(BaseInventoryPlugin):
         return "FortiSwitchOS"
 
     def extract_os_version(self, host):
-        return re.search(r"^[^-]*-v([^-]*)", host["os_version"]).group(1)
+        try:
+            return re.search(r"^[^-]*-v([^-]*)", host["os_version"]).group(1)
+        except Exception:
+            return
 
     """ @property
     def group_extractors(self):
