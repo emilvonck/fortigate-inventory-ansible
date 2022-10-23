@@ -37,6 +37,7 @@ DOCUMENTATION = """
 from ansible.plugins.inventory import BaseInventoryPlugin
 from sys import version as python_version
 from ansible.module_utils.ansible_release import __version__ as ansible_version
+from typing import List, Dict
 import requests
 import urllib3
 
@@ -54,22 +55,32 @@ class InventoryModule(BaseInventoryPlugin):
                 valid = True
         return valid
 
+    def get_switches(self) -> List[Dict]:
+        endpoint = "api/v2/monitor/switch-controller/managed-switch/status"
+
+        return requests.get(
+            f"https://{self.get_option('api_host')}/{endpoint}?access_token={self.get_option('token')}",
+            headers=self.headers,
+            verify=self.get_option("validate_certs"),
+        ).json()["results"]
+
+    def get_access_points(self) -> List[Dict]:
+        endpoint = "api/v2/monitor/wifi/managed_ap"
+
+        return requests.get(
+            f"https://{self.get_option('api_host')}/{endpoint}?access_token={self.get_option('token')}",
+            headers=self.headers,
+            verify=self.get_option("validate_certs"),
+        ).json()["results"]
+
     def get_devices(self) -> dict:
         enpoint_mapping = {
-            "switch": "api/v2/monitor/switch-controller/managed-switch/status",
-            "access_point": "api/v2/monitor/wifi/managed_ap",
+            "switch": self.get_switches(),
+            "access_point": self.get_access_points(),
         }
         results = {}
         for k, v in enpoint_mapping.items():
-            results.update(
-                {
-                    k: requests.get(
-                        f"https://{self.get_option('api_host')}/{v}?access_token={self.get_option('token')}",
-                        headers=self.headers,
-                        verify=self.get_option("validate_certs"),
-                    ).json()["results"]
-                }
-            )
+            results.update({k: v})
 
         return results
 
