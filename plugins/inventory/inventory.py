@@ -79,11 +79,9 @@ class InventoryModule(BaseInventoryPlugin):
 
     def extract_os_distribution(self, host):
         os_distribution_mapping = {
-            "FS": "FortiSwitchOS"
+            "switch-controller": "FortiSwitchOS"
         }
-        extracted_value = re.search(r"\D+", host["os_version"]).group(0)
-
-        return os_distribution_mapping.get(extracted_value, None)
+        return os_distribution_mapping.get(host["path"])
 
     def extract_os_version(self, host):
         try:
