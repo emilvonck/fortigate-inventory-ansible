@@ -55,6 +55,30 @@ class InventoryModule(BaseInventoryPlugin):
                 valid = True
         return valid
 
+    @property
+    def variable_extractors(self):
+        extractors = {
+            "serial": self.extract_serial,
+        }
+
+        return extractors
+
+    def extract_serial(self, device):
+        return device.get("serial", None)
+
+    """ @property
+    def group_extractors(self):
+        extractors = {
+            "ansible_distribution": self.extract_os_distribution,
+            "ansible_distribution_version": self.extract_os_version,
+        } """
+
+    def _fill_host_variables(self, host, hostname):
+        for attribute, extractor in self.variable_extractors.items():
+            extracted_value = extractor(host)
+
+            self.inventory.set_variable(hostname, attribute, extracted_value)
+
     def get_switches(self) -> List[Dict]:
         endpoint = "api/v2/monitor/switch-controller/managed-switch/status"
 
@@ -106,3 +130,4 @@ class InventoryModule(BaseInventoryPlugin):
                 self.inventory.set_variable(
                     host["name"], "ansible_host", host.get("connecting_from")
                 )
+                self._fill_host_variables(host=host, hostname=hostname)
