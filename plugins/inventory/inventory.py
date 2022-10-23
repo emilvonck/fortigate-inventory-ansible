@@ -40,6 +40,7 @@ from ansible.module_utils.ansible_release import __version__ as ansible_version
 from typing import List, Dict
 import requests
 import urllib3
+import re
 
 
 class InventoryModule(BaseInventoryPlugin):
@@ -61,18 +62,26 @@ class InventoryModule(BaseInventoryPlugin):
             "ansible_host": self.extract_connecting_from,
             "serial": self.extract_serial,
             "status": self.extract_status,
+            "ansible_distribution": self.extract_os_distribution,
+            "ansible_distribution_version": self.extract_os_version,
         }
 
         return extractors
 
-    def extract_connecting_from(self, device):
-        return device.get("connecting_from", None)
+    def extract_connecting_from(self, host):
+        return host.get("connecting_from", None)
 
-    def extract_serial(self, device):
-        return device.get("serial", None)
+    def extract_serial(self, host):
+        return host.get("serial", None)
 
-    def extract_status(self, device):
-        return device.get("status", None)
+    def extract_status(self, host):
+        return host.get("status", None)
+
+    def extract_os_distribution(self):
+        return "FortiSwitchOS"
+
+    def extract_os_version(self, host):
+        return re.search(r"^[^-]*-v([^-]*)", host["os_version"]).group(1)
 
     """ @property
     def group_extractors(self):
