@@ -58,13 +58,21 @@ class InventoryModule(BaseInventoryPlugin):
     @property
     def variable_extractors(self):
         extractors = {
+            "ansible_host": self.extract_connecting_from,
             "serial": self.extract_serial,
+            "status": self.extract_status,
         }
 
         return extractors
 
+    def extract_connecting_from(self, device):
+        return device.get("connecting_from", None)
+
     def extract_serial(self, device):
         return device.get("serial", None)
+
+    def extract_status(self, device):
+        return device.get("status", None)
 
     """ @property
     def group_extractors(self):
