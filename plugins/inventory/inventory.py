@@ -79,10 +79,9 @@ class InventoryModule(BaseInventoryPlugin):
 
     def extract_os_distribution(self, host):
         os_distribution_mapping = {
-            "switch-controller": "FortiSwitchOS"
+            "switch": "FortiSwitchOS"
         }
-        path = host.get("path", None)
-        return os_distribution_mapping.get(path, None)
+        return os_distribution_mapping.get(self.device_type, None)
 
     def extract_os_version(self, host):
         try:
@@ -147,8 +146,9 @@ class InventoryModule(BaseInventoryPlugin):
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         # Parse data and cerate inventory objects
-        for _, hosts in self.get_devices().items():
+        for endpoint, hosts in self.get_devices().items():
             for host in hosts:
+                self.device_type = endpoint
                 hostname = host["name"]
                 self.inventory.add_host(host=hostname)
                 self.inventory.set_variable(
