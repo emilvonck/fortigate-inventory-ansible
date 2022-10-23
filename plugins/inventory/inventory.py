@@ -62,7 +62,7 @@ class InventoryModule(BaseInventoryPlugin):
             "ansible_host": self.extract_connecting_from,
             "serial": self.extract_serial,
             "status": self.extract_status,
-            "ansible_distribution": self.extract_os_distribution,
+            # "ansible_distribution": self.extract_os_distribution,
             # "ansible_distribution_version": self.extract_os_version,
         }
 
