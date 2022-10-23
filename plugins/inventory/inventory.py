@@ -72,7 +72,7 @@ class InventoryModule(BaseInventoryPlugin):
         return device.get("serial", None)
 
     def extract_status(self, device):
-        return device.get("status", None)
+        return device.get("status".lower(), None)
 
     """ @property
     def group_extractors(self):
