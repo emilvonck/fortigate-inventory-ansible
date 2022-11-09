@@ -122,6 +122,8 @@ class InventoryModule(BaseInventoryPlugin):
 
     def _generate_safe_group_name(self, group_name):
 
+        # https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#creating-valid-variable-names
+
         first_char: str = group_name[0]
         if first_char.isdigit():
             group_name = f"_{group_name}"
@@ -129,7 +131,7 @@ class InventoryModule(BaseInventoryPlugin):
         invalid_characters = [
             "-",
             ".",
-        ]  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#creating-valid-variable-names
+        ]
 
         for invalid_character in invalid_characters:
             group_name = group_name.replace(invalid_character, "_")
@@ -179,7 +181,7 @@ class InventoryModule(BaseInventoryPlugin):
         if not self.get_option("validate_certs"):
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        # Parse data and cerate inventory objects
+        # Parse data and create inventory objects
         for endpoint, hosts in self.get_devices().items():
             for host in hosts:
                 hostname = host["name"]
