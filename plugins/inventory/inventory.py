@@ -79,9 +79,10 @@ class InventoryModule(BaseInventoryPlugin):
 
     def extract_os_distribution(self, host):
         os_distribution_mapping = {
-            "switch": "FortiSwitchOS"
+            "switch": "FortiSwitch",
+            "access_point": "FortiAP"
         }
-        return os_distribution_mapping.get(self.device_type, None)
+        return os_distribution_mapping.get(host["device_type"])
 
     def extract_os_version(self, host):
         try:
@@ -148,10 +149,10 @@ class InventoryModule(BaseInventoryPlugin):
         # Parse data and cerate inventory objects
         for endpoint, hosts in self.get_devices().items():
             for host in hosts:
-                self.device_type = endpoint
                 hostname = host["name"]
                 self.inventory.add_host(host=hostname)
                 self.inventory.set_variable(
-                    host["name"], "ansible_host", host.get("connecting_from")
+                    hostname, "ansible_host", host.get("connecting_from")
                 )
+                host.update({"device_type": endpoint})
                 self._fill_host_variables(host=host, hostname=hostname)
