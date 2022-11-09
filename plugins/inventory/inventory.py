@@ -122,8 +122,8 @@ class InventoryModule(BaseInventoryPlugin):
 
     def _generate_safe_group_name(self, group_name):
 
-        first_char = group_name[0]
-        if isinstance(first_char, int):
+        first_char: str = group_name[0]
+        if first_char.isdigit():
             group_name = f"_{group_name}"
 
         group_name.replace("-", "_")
