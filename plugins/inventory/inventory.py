@@ -181,4 +181,3 @@ class InventoryModule(BaseInventoryPlugin):
                 host.update({"device_type": endpoint})
                 self._fill_host_variables(host=host, hostname=hostname)
                 self._fill_host_group_variables(host=host, hostname=hostname)
-                self.add_groups(host=host)
