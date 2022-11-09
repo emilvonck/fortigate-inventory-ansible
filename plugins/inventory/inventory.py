@@ -119,6 +119,10 @@ class InventoryModule(BaseInventoryPlugin):
 
             self.inventory.set_variable(hostname, attribute, extracted_value)
 
+            if isinstance(extracted_value, str):
+                self.inventory.add_group(group=extracted_value)
+                self.inventory.add_host(group=extracted_value, host=hostname)
+
     def add_host_to_groups(self, host, hostname):
         pass
 
