@@ -61,9 +61,6 @@ class InventoryModule(BaseInventoryPlugin):
         extractors = {
             "ansible_host": self.extract_connecting_from,
             "serial": self.extract_serial,
-            "status": self.extract_connection_status,
-            "ansible_os_distribution": self.extract_os_distribution,
-            "ansible_distribution_version": self.extract_os_version,
         }
 
         return extractors
@@ -84,10 +81,14 @@ class InventoryModule(BaseInventoryPlugin):
 
     def extract_os_distribution(self, host):
         os_distribution_mapping = {
-            "switch": "fortiswitch",
-            "access_point": "fortiap"
+            "switch": "FortiSwitch",
+            "access_point": "FortiAP"
         }
-        return os_distribution_mapping.get(host["device_type"])
+        return os_distribution_mapping.get(host["device_type"], None)
+
+    def extract_device_platform(self, host):
+
+        return host.get("device_tpye", None)
 
     def extract_os_version(self, host):
         try:
@@ -95,18 +96,36 @@ class InventoryModule(BaseInventoryPlugin):
         except Exception:
             return
 
-    """ @property
+    @property
     def group_extractors(self):
         extractors = {
-            "ansible_distribution": self.extract_os_distribution,
+            "status": self.extract_connection_status,
+            "ansible_os_distribution": self.extract_os_distribution,
             "ansible_distribution_version": self.extract_os_version,
-        } """
+            "device_type": self.extract_device_platform,
+        }
+
+        return extractors
 
     def _fill_host_variables(self, host, hostname):
         for attribute, extractor in self.variable_extractors.items():
             extracted_value = extractor(host)
 
             self.inventory.set_variable(hostname, attribute, extracted_value)
+
+    def _fill_host_group_variables(self, host, hostname):
+        for attribute, extractor in self.group_extractors.items():
+            extracted_value = extractor(host)
+
+            self.inventory.set_variable(hostname, attribute, extracted_value)
+
+    def add_host_to_groups(self, host, hostname):
+        pass
+
+    def add_groups(self, host):
+        for _, extractor in self.group_extractors.items():
+            group_name = extractor(host)
+            self.inventory.add_group(group=group_name)
 
     def get_switches(self) -> List[Dict]:
         endpoint = "api/v2/monitor/switch-controller/managed-switch/status"
@@ -161,3 +180,5 @@ class InventoryModule(BaseInventoryPlugin):
                 )
                 host.update({"device_type": endpoint})
                 self._fill_host_variables(host=host, hostname=hostname)
+                self._fill_host_group_variables(host=host, hostname=hostname)
+                self.add_groups(host=host)
