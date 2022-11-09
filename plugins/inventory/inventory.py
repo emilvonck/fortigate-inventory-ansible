@@ -76,14 +76,11 @@ class InventoryModule(BaseInventoryPlugin):
 
         if isinstance(status, str):
             status = status.lower()
-        
+
         return status
 
     def extract_os_distribution(self, host):
-        os_distribution_mapping = {
-            "switch": "FortiSwitch",
-            "access_point": "FortiAP"
-        }
+        os_distribution_mapping = {"switch": "FortiSwitch", "access_point": "FortiAP"}
         return os_distribution_mapping.get(host["device_type"], None)
 
     def extract_device_platform(self, host):
@@ -119,17 +116,19 @@ class InventoryModule(BaseInventoryPlugin):
 
             self.inventory.set_variable(hostname, attribute, extracted_value)
 
-            if isinstance(extracted_value, str):
-                self.inventory.add_group(group=extracted_value)
-                self.inventory.add_host(group=extracted_value, host=hostname)
+            safe_group_name = self._generate_safe_group_name(extracted_value)
+            self.inventory.add_group(group=safe_group_name)
+            self.inventory.add_host(group=safe_group_name, host=hostname)
 
-    def add_host_to_groups(self, host, hostname):
-        pass
+    def _generate_safe_group_name(self, group_name):
 
-    """ def add_groups(self, host):
-        for _, extractor in self.group_extractors.items():
-            group_name = extractor(host)
-            self.inventory.add_group(group=group_name) """
+        first_char = group_name[0]
+        if isinstance(first_char, int):
+            group_name = f"_{group_name}"
+
+        group_name.replace("-", "_")
+
+        return group_name
 
     def get_switches(self) -> List[Dict]:
         endpoint = "api/v2/monitor/switch-controller/managed-switch/status"
