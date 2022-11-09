@@ -95,7 +95,7 @@ class InventoryModule(BaseInventoryPlugin):
 
     def extract_device_model(self, host):
         try:
-            return re.search(r"^[^-]*", host["os_version"])
+            return re.search(r"^[^-]*", host["os_version"]).group(0)
         except Exception:
             return None
 
