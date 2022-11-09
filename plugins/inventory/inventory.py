@@ -132,7 +132,7 @@ class InventoryModule(BaseInventoryPlugin):
         ]  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#creating-valid-variable-names
 
         for invalid_character in invalid_characters:
-            group_name.replace(invalid_character, "_")
+            group_name = group_name.replace(invalid_character, "_")
 
         return group_name
 
