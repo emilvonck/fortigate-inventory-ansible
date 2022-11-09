@@ -61,7 +61,7 @@ class InventoryModule(BaseInventoryPlugin):
         extractors = {
             "ansible_host": self.extract_connecting_from,
             "serial": self.extract_serial,
-            "status": self.extract_status,
+            "status": self.extract_connection_status,
             "ansible_os_distribution": self.extract_os_distribution,
             "ansible_distribution_version": self.extract_os_version,
         }
@@ -74,13 +74,18 @@ class InventoryModule(BaseInventoryPlugin):
     def extract_serial(self, host):
         return host.get("serial", None)
 
-    def extract_status(self, host):
-        return host.get("status", None)
+    def extract_connection_status(self, host):
+        status = host.get("status", None)
+
+        if isinstance(status, str):
+            status = status.lower()
+        
+        return status
 
     def extract_os_distribution(self, host):
         os_distribution_mapping = {
-            "switch": "FortiSwitch",
-            "access_point": "FortiAP"
+            "switch": "fortiswitch",
+            "access_point": "fortiap"
         }
         return os_distribution_mapping.get(host["device_type"])
 
