@@ -93,11 +93,21 @@ class InventoryModule(BaseInventoryPlugin):
         except Exception:
             return None
 
+    @property
+    def part_model_mapping(self):
+        part_model_mapping = {
+            "S548DF": "FortiSwitch 548D-FPOE",
+            "FS3E32": "FortiSwitch 3032E",
+            "FS1E48": "FortiSwitch 1048E",
+        }
+
+        return part_model_mapping
+
     def extract_device_model(self, host):
-        try:
-            return re.search(r"^[^-]*", host["os_version"]).group(0)
-        except Exception:
-            return None
+        part_number = re.search(r"^[^-]*", host["os_version"]).group(0)
+
+        return self.part_model_mapping.get(part_number, None)
+
 
     @property
     def group_extractors(self):
@@ -138,6 +148,7 @@ class InventoryModule(BaseInventoryPlugin):
         invalid_characters = [
             "-",
             ".",
+            " ",
         ]
 
         for invalid_character in invalid_characters:
