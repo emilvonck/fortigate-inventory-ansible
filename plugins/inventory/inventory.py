@@ -91,7 +91,13 @@ class InventoryModule(BaseInventoryPlugin):
         try:
             return re.search(r"^[^-]*-v([^-]*)", host["os_version"]).group(1)
         except Exception:
-            return
+            return None
+
+    def extract_device_model(self, host):
+        try:
+            return re.search(r"^[^-]*", host["os_version"])
+        except Exception:
+            return None
 
     @property
     def group_extractors(self):
@@ -100,6 +106,7 @@ class InventoryModule(BaseInventoryPlugin):
             "ansible_os_distribution": self.extract_os_distribution,
             "ansible_distribution_version": self.extract_os_version,
             "device_type": self.extract_device_platform,
+            "device_model": self.extract_device_model,
         }
 
         return extractors
