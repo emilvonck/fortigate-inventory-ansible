@@ -122,10 +122,10 @@ class InventoryModule(BaseInventoryPlugin):
     def add_host_to_groups(self, host, hostname):
         pass
 
-    def add_groups(self, host):
+    """ def add_groups(self, host):
         for _, extractor in self.group_extractors.items():
             group_name = extractor(host)
-            self.inventory.add_group(group=group_name)
+            self.inventory.add_group(group=group_name) """
 
     def get_switches(self) -> List[Dict]:
         endpoint = "api/v2/monitor/switch-controller/managed-switch/status"
