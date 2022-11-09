@@ -95,10 +95,13 @@ class InventoryModule(BaseInventoryPlugin):
 
     @property
     def part_model_mapping(self):
+
         part_model_mapping = {
             "S548DF": "FortiSwitch 548D-FPOE",
             "FS3E32": "FortiSwitch 3032E",
             "FS1E48": "FortiSwitch 1048E",
+            "S108EF": "FortiSwitch 108E-FPOE",
+            "FP23JF": "FortiAP 23JF",
         }
 
         return part_model_mapping
@@ -107,7 +110,6 @@ class InventoryModule(BaseInventoryPlugin):
         part_number = re.search(r"^[^-]*", host["os_version"]).group(0)
 
         return self.part_model_mapping.get(part_number, None)
-
 
     @property
     def group_extractors(self):
