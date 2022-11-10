@@ -61,12 +61,16 @@ class InventoryModule(BaseInventoryPlugin):
         extractors = {
             "ansible_host": self.extract_connecting_from,
             "serial": self.extract_serial,
+            "vendor": self.extract_vendor,
         }
 
         return extractors
 
     def extract_connecting_from(self, host):
         return host.get("connecting_from", None)
+
+    def extract_vendor(self):
+        return "Fortinet"
 
     def extract_serial(self, host):
         return host.get("serial", None)
@@ -97,16 +101,16 @@ class InventoryModule(BaseInventoryPlugin):
     def part_model_mapping(self):
 
         part_model_mapping = {
-            "S548DF": "FortiSwitch 548D-FPOE",
-            "FS3E32": "FortiSwitch 3032E",
-            "FS1E48": "FortiSwitch 1048E",
-            "S108EF": "FortiSwitch 108E-FPOE",
-            "FP23JF": "FortiAP 23JF",
+            "S548DF": "FS-548D-FPOE",
+            "FS3E32": "FS-3032E",
+            "FS1E48": "FS-1048E",
+            "S108EF": "FS-108E-FPOE",
+            "FP23JF": "FAP-23JF",
         }
 
         return part_model_mapping
 
-    def extract_device_model(self, host):
+    def extract_device_type(self, host):
         part_number = re.search(r"^[^-]*", host["os_version"]).group(0)
 
         return self.part_model_mapping.get(part_number, None)
@@ -114,11 +118,11 @@ class InventoryModule(BaseInventoryPlugin):
     @property
     def group_extractors(self):
         extractors = {
-            "status": self.extract_connection_status,
+            "device_status": self.extract_connection_status,
             "ansible_os_distribution": self.extract_os_distribution,
             "ansible_distribution_version": self.extract_os_version,
-            "device_type": self.extract_device_platform,
-            "device_model": self.extract_device_model,
+            "device_platform": self.extract_device_platform,
+            "device_type": self.extract_device_type,
         }
 
         return extractors
@@ -178,8 +182,8 @@ class InventoryModule(BaseInventoryPlugin):
 
     def get_devices(self) -> dict:
         enpoint_mapping = {
-            "switch": self.get_switches(),
-            "access_point": self.get_access_points(),
+            "FortiSwitch": self.get_switches(),
+            "FortiAP": self.get_access_points(),
         }
         results = {}
         for k, v in enpoint_mapping.items():
@@ -209,6 +213,6 @@ class InventoryModule(BaseInventoryPlugin):
                 self.inventory.set_variable(
                     hostname, "ansible_host", host.get("connecting_from")
                 )
-                host.update({"device_type": endpoint})
+                host.update({"device_platform": endpoint})
                 self._fill_host_variables(host=host, hostname=hostname)
                 self._fill_host_group_variables(host=host, hostname=hostname)
