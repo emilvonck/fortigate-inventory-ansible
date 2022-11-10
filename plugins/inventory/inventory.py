@@ -89,7 +89,7 @@ class InventoryModule(BaseInventoryPlugin):
 
     def extract_device_platform(self, host):
 
-        return host.get("device_type", None)
+        return host.get("device_platform", None)
 
     def extract_os_version(self, host):
         try:
