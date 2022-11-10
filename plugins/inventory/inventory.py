@@ -60,8 +60,8 @@ class InventoryModule(BaseInventoryPlugin):
     def variable_extractors(self):
         extractors = {
             "ansible_host": self.extract_connecting_from,
-            "serial": self.extract_serial,
-            "vendor": self.extract_vendor,
+            "device_serial": self.extract_serial,
+            "device_vendor": self.extract_vendor,
         }
 
         return extractors
@@ -69,8 +69,8 @@ class InventoryModule(BaseInventoryPlugin):
     def extract_connecting_from(self, host):
         return host.get("connecting_from", None)
 
-    def extract_vendor(self):
-        return "Fortinet"
+    def extract_vendor(self, host):
+        return host.get("device_vendor", None)
 
     def extract_serial(self, host):
         return host.get("serial", None)
@@ -214,5 +214,6 @@ class InventoryModule(BaseInventoryPlugin):
                     hostname, "ansible_host", host.get("connecting_from")
                 )
                 host.update({"device_platform": endpoint})
+                host.update({"device_vendor": "Fortinet"})
                 self._fill_host_variables(host=host, hostname=hostname)
                 self._fill_host_group_variables(host=host, hostname=hostname)
