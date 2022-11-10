@@ -83,11 +83,7 @@ class InventoryModule(BaseInventoryPlugin):
 
         return status
 
-    def extract_os_distribution(self, host):
-        return host.get("device_platform", None)
-
     def extract_device_platform(self, host):
-
         return host.get("device_platform", None)
 
     def extract_os_version(self, host):
@@ -118,7 +114,6 @@ class InventoryModule(BaseInventoryPlugin):
     def group_extractors(self):
         extractors = {
             "device_status": self.extract_connection_status,
-            "ansible_os_distribution": self.extract_os_distribution,
             "ansible_distribution_version": self.extract_os_version,
             "device_platform": self.extract_device_platform,
             "device_type": self.extract_device_type,
