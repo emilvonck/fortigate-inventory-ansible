@@ -62,6 +62,7 @@ class InventoryModule(BaseInventoryPlugin):
             "ansible_host": self.extract_connecting_from,
             "device_serial": self.extract_serial,
             "device_vendor": self.extract_vendor,
+            "ansible_distribution_release": self.extract_os_release,
         }
 
         return extractors
@@ -89,6 +90,12 @@ class InventoryModule(BaseInventoryPlugin):
     def extract_os_version(self, host):
         try:
             return re.search(r"^[^-]*-v([^-]*)", host["os_version"]).group(1)
+        except Exception:
+            return None
+
+    def extract_os_release(self, host):
+        try:
+            return re.search(r"-.*-(.*)", host["os_version"]).group(1)
         except Exception:
             return None
 
