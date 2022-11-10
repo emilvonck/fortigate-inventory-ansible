@@ -84,8 +84,7 @@ class InventoryModule(BaseInventoryPlugin):
         return status
 
     def extract_os_distribution(self, host):
-        os_distribution_mapping = {"switch": "FortiSwitch", "access_point": "FortiAP"}
-        return os_distribution_mapping.get(host["device_type"], None)
+        return host.get("device_platform", None)
 
     def extract_device_platform(self, host):
 
