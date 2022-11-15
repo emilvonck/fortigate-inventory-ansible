@@ -58,15 +58,23 @@ class InventoryModule(BaseInventoryPlugin):
         return valid
 
     @property
-    def variable_extractors(self):
+    def host_variable_extractors(self):
         extractors = {
             "ansible_host": self.extract_connecting_from,
             "device_serial": self.extract_serial,
             "device_vendor": self.extract_vendor,
             "ansible_distribution_release": self.extract_os_release,
+            "capabilities": self.extract_capabilities,
         }
 
         return extractors
+
+    def extract_capabilities(self, host):
+        capabilities = {
+            "poe_capable": self._extract_poe_capable(host=host),
+        }
+
+        return capabilities
 
     def extract_connecting_from(self, host):
         value = host.get("connecting_from")
@@ -142,6 +150,17 @@ class InventoryModule(BaseInventoryPlugin):
 
         return self.part_model_mapping.get(part_number, None)
 
+    def _extract_poe_capable(self, host):
+        ports = host.get("ports")
+
+        poe_capable_port_list = [
+            i.get("poe_capable") for i in ports if i.get("poe_capable")
+        ]
+        if poe_capable_port_list:
+            return True
+
+        return False
+
     @property
     def group_extractors(self):
         extractors = {
@@ -154,7 +173,7 @@ class InventoryModule(BaseInventoryPlugin):
         return extractors
 
     def _fill_host_variables(self, host, hostname):
-        for attribute, extractor in self.variable_extractors.items():
+        for attribute, extractor in self.host_variable_extractors.items():
             extracted_value = extractor(host)
 
             self.inventory.set_variable(hostname, attribute, extracted_value)
