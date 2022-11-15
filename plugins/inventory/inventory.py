@@ -149,9 +149,9 @@ class InventoryModule(BaseInventoryPlugin):
             i.get("poe_capable") for i in ports if i.get("poe_capable")
         ]
         if poe_capable_port_list:
-            return "poe_switch"
+            return "poe_switch_true"
 
-        return "no_poe_switch"
+        return "no_poe_switch_false"
 
     @property
     def group_extractors(self):
