@@ -142,6 +142,17 @@ class InventoryModule(BaseInventoryPlugin):
 
         return self.part_model_mapping.get(part_number, None)
 
+    def extract_poe_capable(self, host):
+        ports = host.get("ports")
+
+        poe_capable_port_list = [
+            i.get("poe_capable") for i in ports if i.get("poe_capable")
+        ]
+        if poe_capable_port_list:
+            return "poe_switch"
+
+        return "no_poe_switch"
+
     @property
     def group_extractors(self):
         extractors = {
@@ -149,6 +160,7 @@ class InventoryModule(BaseInventoryPlugin):
             "ansible_distribution_version": self.extract_os_version,
             "device_platform": self.extract_device_platform,
             "device_type": self.extract_device_type,
+            "poe_switch": self.extract_poe_capable,
         }
 
         return extractors
