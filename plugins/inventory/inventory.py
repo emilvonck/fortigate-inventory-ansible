@@ -153,9 +153,13 @@ class InventoryModule(BaseInventoryPlugin):
     def _extract_poe_capable(self, host):
         ports = host.get("ports")
 
-        poe_capable_port_list = [
-            i.get("poe_capable") for i in ports if i.get("poe_capable")
-        ]
+        poe_capable_port_list = []
+
+        if ports:
+            poe_capable_port_list = [
+                i.get("poe_capable") for i in ports if i.get("poe_capable")
+            ]
+
         if poe_capable_port_list:
             return True
 
