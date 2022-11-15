@@ -35,8 +35,9 @@ DOCUMENTATION = """
             type: boolean
 """
 from ansible.plugins.inventory import BaseInventoryPlugin
-from sys import version as python_version
 from ansible.module_utils.ansible_release import __version__ as ansible_version
+from ansible.errors import AnsibleError
+from sys import version as python_version
 from typing import List, Dict
 import requests
 import urllib3
@@ -68,46 +69,70 @@ class InventoryModule(BaseInventoryPlugin):
         return extractors
 
     def extract_connecting_from(self, host):
-        return host.get("connecting_from", None)
+        value = host.get("connecting_from")
+
+        try:
+            return value.lower()
+        except AttributeError:
+            return value
 
     def extract_vendor(self, host):
-        return host.get("device_vendor", None)
+        value = host.get("device_vendor")
+
+        try:
+            return value.lower()
+        except AttributeError:
+            return value
 
     def extract_serial(self, host):
-        return host.get("serial", None)
+        value = host.get("serial")
+
+        try:
+            return value.lower()
+        except AttributeError:
+            return value
 
     def extract_connection_status(self, host):
-        status = host.get("status", None)
+        value = host.get("status")
 
-        if isinstance(status, str):
-            status = status.lower()
-
-        return status
+        try:
+            return value.lower()
+        except AttributeError:
+            return value
 
     def extract_device_platform(self, host):
-        return host.get("device_platform", None)
+        value = host.get("device_platform")
+
+        try:
+            return value.lower()
+        except AttributeError:
+            return value
 
     def extract_os_version(self, host):
-        try:
-            return re.search(r"^[^-]*-v([^-]*)", host["os_version"]).group(1)
-        except Exception:
-            return None
+        value = re.search(r"^[^-]*-v([^-]*)", host.get("os_version"))
+
+        if value:
+            return value.group(1).lower()
+
+        raise AnsibleError("Failed to extract_os_version")
 
     def extract_os_release(self, host):
-        try:
-            return re.search(r"-.*-(.*)", host["os_version"]).group(1)
-        except Exception:
-            return None
+        value = re.search(r"-.*-(.*)", host.get("os_version"))
+
+        if value:
+            return value.group(1).lower()
+
+        raise AnsibleError("Failed to extract_os_version")
 
     @property
     def part_model_mapping(self):
 
         part_model_mapping = {
-            "S548DF": "FS-548D-FPOE",
-            "FS3E32": "FS-3032E",
-            "FS1E48": "FS-1048E",
-            "S108EF": "FS-108E-FPOE",
-            "FP23JF": "FAP-23JF",
+            "S548DF": "fs-548d-fpoe",
+            "FS3E32": "fs-3032e",
+            "FS1E48": "fs-1048e",
+            "S108EF": "fs-108e-fpoe",
+            "FP23JF": "fap-23jf",
         }
 
         return part_model_mapping
@@ -183,8 +208,8 @@ class InventoryModule(BaseInventoryPlugin):
 
     def get_devices(self) -> dict:
         enpoint_mapping = {
-            "FortiSwitch": self.get_switches(),
-            "FortiAP": self.get_access_points(),
+            "fortiswitch": self.get_switches(),
+            "fortiap": self.get_access_points(),
         }
         results = {}
         for k, v in enpoint_mapping.items():
