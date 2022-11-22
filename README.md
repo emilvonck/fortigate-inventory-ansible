@@ -16,7 +16,7 @@ requests
 ### Install the collection
 
 ```bash
-ansible-galaxy collection install git+https://gitlab.com/evansible/fortigate-inventory-ansible.git
+ansible-galaxy collection install git+https://github.com/emilvonck/fortigate-inventory-ansible.git
 ```
 
 ## Usage
