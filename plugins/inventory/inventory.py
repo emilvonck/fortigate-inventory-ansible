@@ -141,6 +141,7 @@ class InventoryModule(BaseInventoryPlugin):
             "FS1E48": "fs-1048e",
             "S108EF": "fs-108e-fpoe",
             "FP23JF": "fap-23jf",
+            "PU431F": "fap-u431f",
         }
 
         return part_model_mapping
