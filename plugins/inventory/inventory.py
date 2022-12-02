@@ -146,7 +146,10 @@ class InventoryModule(BaseInventoryPlugin):
         return part_model_mapping
 
     def extract_device_type(self, host):
-        part_number = re.search(r"^[^-]*", host["os_version"]).group(0)
+        try:
+            part_number = re.search(r"^[^-]*", host["os_version"]).group(0)
+        except Exception:
+            return None
 
         return self.part_model_mapping.get(part_number, None)
 
