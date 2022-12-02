@@ -199,6 +199,7 @@ class InventoryModule(BaseInventoryPlugin):
 
         # https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#creating-valid-variable-names
 
+        group_name = str(group_name)
         first_char: str = group_name[0]
         if first_char.isdigit():
             group_name = f"_{group_name}"
@@ -211,7 +212,6 @@ class InventoryModule(BaseInventoryPlugin):
 
         for invalid_character in invalid_characters:
             group_name = group_name.replace(invalid_character, "_")
-
         return group_name
 
     def get_switches(self) -> List[Dict]:
