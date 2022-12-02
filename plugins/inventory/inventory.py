@@ -36,7 +36,6 @@ DOCUMENTATION = """
 """
 from ansible.plugins.inventory import BaseInventoryPlugin
 from ansible.module_utils.ansible_release import __version__ as ansible_version
-from ansible.errors import AnsibleError
 from sys import version as python_version
 from typing import List, Dict
 import requests
@@ -117,12 +116,12 @@ class InventoryModule(BaseInventoryPlugin):
             return value
 
     def extract_os_version(self, host):
-        value = re.search(r"^[^-]*-v([^-]*)", host.get("os_version"))
+        try:
+            value = re.search(r"^[^-]*-(v[^-]*)", host.get("os_version"))
+        except Exception:
+            return None
 
-        if value:
-            return value.group(1).lower()
-
-        raise AnsibleError("Failed to extract_os_version")
+        return value.group(1).lower()
 
     def extract_os_release(self, host):
         try:
