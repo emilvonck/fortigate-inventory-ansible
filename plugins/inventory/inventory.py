@@ -125,12 +125,12 @@ class InventoryModule(BaseInventoryPlugin):
         raise AnsibleError("Failed to extract_os_version")
 
     def extract_os_release(self, host):
-        value = re.search(r"-.*-(.*)", host.get("os_version"))
+        try:
+            value = re.search(r"-.*-build(\d+)", host.get("os_version"))
+        except Exception:
+            return None
 
-        if value:
-            return value.group(1).lower()
-
-        raise AnsibleError("Failed to extract_os_version")
+        return value.group(1).lower()
 
     @property
     def part_model_mapping(self):
