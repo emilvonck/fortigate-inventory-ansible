@@ -36,7 +36,6 @@ DOCUMENTATION = """
 """
 from ansible.plugins.inventory import BaseInventoryPlugin
 from ansible.module_utils.ansible_release import __version__ as ansible_version
-from ansible.errors import AnsibleError
 from sys import version as python_version
 from typing import List, Dict
 import requests
@@ -117,20 +116,20 @@ class InventoryModule(BaseInventoryPlugin):
             return value
 
     def extract_os_version(self, host):
-        value = re.search(r"^[^-]*-v([^-]*)", host.get("os_version"))
+        try:
+            value = re.search(r"^[^-]*-(v[^-]*)", host.get("os_version"))
+        except Exception:
+            return None
 
-        if value:
-            return value.group(1).lower()
-
-        raise AnsibleError("Failed to extract_os_version")
+        return value.group(1).lower()
 
     def extract_os_release(self, host):
-        value = re.search(r"-.*-(.*)", host.get("os_version"))
+        try:
+            value = re.search(r"-.*-build(\d+)", host.get("os_version"))
+        except Exception:
+            return None
 
-        if value:
-            return value.group(1).lower()
-
-        raise AnsibleError("Failed to extract_os_version")
+        return value.group(1).lower()
 
     @property
     def part_model_mapping(self):
@@ -147,7 +146,10 @@ class InventoryModule(BaseInventoryPlugin):
         return part_model_mapping
 
     def extract_device_type(self, host):
-        part_number = re.search(r"^[^-]*", host["os_version"]).group(0)
+        try:
+            part_number = re.search(r"^[^-]*", host["os_version"]).group(0)
+        except Exception:
+            return None
 
         return self.part_model_mapping.get(part_number, None)
 
@@ -197,6 +199,7 @@ class InventoryModule(BaseInventoryPlugin):
 
         # https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#creating-valid-variable-names
 
+        group_name = str(group_name)
         first_char: str = group_name[0]
         if first_char.isdigit():
             group_name = f"_{group_name}"
@@ -209,7 +212,6 @@ class InventoryModule(BaseInventoryPlugin):
 
         for invalid_character in invalid_characters:
             group_name = group_name.replace(invalid_character, "_")
-
         return group_name
 
     def get_switches(self) -> List[Dict]:
